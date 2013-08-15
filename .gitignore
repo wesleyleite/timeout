@@ -11,3 +11,7 @@
 # OS generated files
 *.swp
 *.swo
+
+# Arquivos gerado pelo script
+log.txt
+full_data.txt
