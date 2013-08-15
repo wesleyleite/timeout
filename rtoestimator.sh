@@ -33,10 +33,10 @@ done
 
 # Juntar RTT e SRTT em rtt_srtt.txt
 #otimizar, maneira alternativa de fazer a junção linha a linha
-cat -n rtt.txt > rtt_svar.txt
-cat -n srtt.txt > srtt_svar.txt
-join -j 1 rtt_svar.txt srtt_svar.txt > rtt_srtt.txt
-rm rtt_svar.txt srtt_svar.txt
+cat -n rtt.txt > rtt_numered.txt
+cat -n srtt.txt > srtt_numered.txt
+join -j 1 rtt_numered.txt srtt_numered.txt > rtt_srtt.txt
+rm rtt_numered.txt srtt_numered.txt
 
 # Gerar o SVAR
 let SVAR=$RTT0/2
@@ -55,20 +55,31 @@ do
    echo $SVAR >> svar.txt
 done
 
-cat -n svar.txt > svar_rto.txt
-join -j 1 rtt_srtt.txt svar_rto.txt > rtt_srtt_svar.txt
-rm svar_rto.txt rtt_srtt.txt
+# Juntar RTT, SRTT e SVAR em rtt_srtt_svar.txt
+cat -n svar.txt > svar_numered.txt
+join -j 1 rtt_srtt.txt svar_numered.txt > rtt_srtt_svar.txt
+rm svar_numered.txt rtt_srtt.txt
 
+# Gerar o RTO
 while read RTT_SRTT_SVAR
 do
    SRTT=$(echo $RTT_SRTT_SVAR | cut -d' ' -f3)
    SVAR=$(echo $RTT_SRTT_SVAR | cut -d' ' -f4)
    RTO=$(echo "$SRTT+4*$SVAR" | bc)
-   echo $SRTT \| $SVAR \| $RTO
    echo $RTO >> rto.txt
 done < rtt_srtt_svar.txt
 
+# Juntar RTT, SRTT, SVAR e RTO em full_data.txt
+cat -n rto.txt > rto_numered.txt
+join -j 1 rtt_srtt_svar.txt rto_numered.txt > full_data.txt
+rm rto_numered.txt rtt_srtt_svar.txt
+rm rtt.txt srtt.txt svar.txt rto.txt
 
+echo "Concluído"
 
+#criar arquivos temporários em outro diretório, e.g. /tmp
+#verificar quantidade de parametros
 #considerar perdas
+#implementar pacotes udp, tcp e icmp
+#verificar jitter
 # See more at: http://www.devin.com.br/shell_script/#sthash.tCFaYGI7.dpuf
