@@ -21,7 +21,7 @@ ajuda() {
     echo "Desenvolvido por Rodrigo Martins"
     echo
     echo "$0 NUM HOST"
-    echo "NUM   =   Total de pacotes que esperar retorno"
+    echo "NUM   =   Total de pacotes que esperar retorno MIN=2"
     echo "HOST  =   Opcional mas pode ser informado um host para disparo"
     echo
     exit
@@ -76,13 +76,11 @@ gerar() {
 
 
 # validar se quantidade de pacotes enviadas é numerico
-# pegar somente dois primeiros limitando a ate 99
 TPKTS=$1
-#TPKTS=${TPKTS:0:2 }
 TPKTS=$( echo ${TPKTS} | 
         grep -Ewo '^[0-9]+$' )
 
-[ $# -le 0 ] || [ -z ${TPKTS} ] && ajuda 
+[ $# -le 0 ] || [ -z ${TPKTS} ] || [ ${TPKTS} -le 1 ] && ajuda 
 
 DHOST=$2
 
